@@ -14,6 +14,7 @@ struct Game
   void resume();
   void keypressed(const sf::Event::KeyEvent&);
   void keyreleased(const sf::Event::KeyEvent&);
+  void tick();
   void draw();
 
  private:

@@ -47,6 +47,8 @@ int main(int argc, char *argv[])
       }
     }
 
+    game.tick();
+
     game.draw();
 
     window.display();
