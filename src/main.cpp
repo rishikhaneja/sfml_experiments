@@ -2,21 +2,53 @@
 
 #include <SFML/Graphics.hpp>
 
-using namespace std;
+#include "game.hpp"
 
 int main(int argc, char *argv[])
 {
-  sf::Window App(sf::VideoMode(800, 600), "myproject");
-  while (App.isOpen())
+  sf::ContextSettings settings;
+  settings.antialiasingLevel = 8;
+
+  sf::RenderWindow window(sf::VideoMode(800, 600), "sfml_experiments",
+                          sf::Style::Default, settings);
+  Fatty::Game      game(window);
+
+  while (window.isOpen())
   {
-    sf::Event Event;
-    while (App.pollEvent(Event))
+    sf::Event event;
+
+    while (window.pollEvent(event))
     {
-      if (Event.type == sf::Event::Closed)
+      switch (event.type)
       {
-        App.close();
+        case sf::Event::Closed:
+          game.destroy();
+          window.close();
+          break;
+
+        case sf::Event::KeyPressed:
+          game.keypressed(event.key);
+          break;
+
+        case sf::Event::KeyReleased:
+          game.keyreleased(event.key);
+          break;
+
+        case sf::Event::LostFocus:
+          game.pause();
+          break;
+
+        case sf::Event::GainedFocus:
+          game.resume();
+          break;
+
+        default:
+          break;
       }
     }
-    App.display();
+
+    game.draw();
+
+    window.display();
   }
 }
