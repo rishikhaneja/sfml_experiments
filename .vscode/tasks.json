@@ -4,9 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "main",
+            "label": "colors",
             "type": "shell",
-            "command": "cd build && ./sfml_experiments",
+            "command": "cd build/modules/games/colors && ./colors",
             "problemMatcher": []
         }
     ]

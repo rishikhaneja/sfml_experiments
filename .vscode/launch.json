@@ -8,7 +8,7 @@
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/sfml_experiments",
+            "program": "${workspaceFolder}/build/modules/games/colors/colors",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
