@@ -6,24 +6,29 @@ namespace Fatty
 {
 /*
 Game is any class with member methods:
-    void create(Fatty::State&);
-    void destroy(Fatty::State&);
-    void pause(Fatty::State&);
-    void resume(Fatty::State&);
-    void key_pressed(Fatty::State&, const sf::Event::KeyEvent&);
-    void key_released(Fatty::State&, const sf::Event::KeyEvent&);
-    void tick(Fatty::State&);
-    void draw(Fatty::State&);
+    void create(Fatty::TwoDState&);
+    void destroy(Fatty::TwoDState&);
+    void pause(Fatty::TwoDState&);
+    void resume(Fatty::TwoDState&);
+    void key_pressed(Fatty::TwoDState&, const sf::Event::KeyEvent&);
+    void key_released(Fatty::TwoDState&, const sf::Event::KeyEvent&);
+    void tick(Fatty::TwoDState&);
+    void draw(Fatty::TwoDState&);
 */
 
-template <typename Game>
-int Main(Game& game, int argc, char* argv[])
+template <typename Game, typename Window, typename State>
+int Main(Game& game, const char* name)
 {
   sf::ContextSettings settings;
-  settings.antialiasingLevel = 8;
+  settings.depthBits         = 24;
+  settings.stencilBits       = 8;
+  settings.antialiasingLevel = 2;  // Optional
+  settings.majorVersion      = 3;
+  settings.minorVersion      = 2;
+  settings.attributeFlags    = sf::ContextSettings::Core;
 
-  sf::RenderWindow window(sf::VideoMode(800, 600), "sfml_experiments",
-                          sf::Style::Default, settings);
+  Window window(sf::VideoMode(800, 600), name, sf::Style::Default, settings);
+  window.setActive(true);
 
   State state{window};
 
@@ -71,4 +76,17 @@ int Main(Game& game, int argc, char* argv[])
   }
   return 0;
 }
+
+template <typename Game>
+int TwoDMain(Game& game, const char* name)
+{
+  return Main<Game, sf::RenderWindow, TwoDState>(game, name);
+}
+
+template <typename Game>
+int ThreeDMain(Game& game, const char* name)
+{
+  return Main<Game, sf::Window, ThreeDState>(game, name);
+}
+
 }  // namespace Fatty

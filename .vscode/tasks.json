@@ -4,10 +4,16 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "colors",
+            "label": "2dsample",
             "type": "shell",
-            "command": "cd build/modules/games/colors && ./colors",
+            "command": "cd build/modules/games/2dsample && ./2dsample",
             "problemMatcher": []
-        }
+        },
+        {
+            "label": "3dsample",
+            "type": "shell",
+            "command": "cd build/modules/games/3dsample && ./3dsample",
+            "problemMatcher": []
+        },
     ]
 }

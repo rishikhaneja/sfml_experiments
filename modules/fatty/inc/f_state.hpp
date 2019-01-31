@@ -4,8 +4,13 @@
 
 namespace Fatty
 {
+template <typename Window>
 struct State
 {
-  sf::RenderWindow& window;
+  Window& window;
 };
+
+using TwoDState   = State<sf::RenderWindow>;
+using ThreeDState = State<sf::Window>;
+
 }  // namespace Fatty

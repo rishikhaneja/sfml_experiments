@@ -6,6 +6,6 @@
 
 int main(int argc, char *argv[])
 {
-  Colors::Game game;
-  return Fatty::Main(game, argc, argv);
+  Sample::Game game;
+  return Fatty::ThreeDMain(game, "3DSample");
 }

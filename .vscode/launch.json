@@ -5,16 +5,28 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(lldb) Launch",
+            "name": "2dsample",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/modules/games/colors/colors",
+            "program": "${workspaceFolder}/build/modules/games/2dsample/2dsample",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "lldb"
-        }
+        },
+        {
+            "name": "3dsample",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/modules/games/3dsample/3dsample",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
     ]
 }

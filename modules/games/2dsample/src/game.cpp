@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-namespace Colors
+namespace Sample
 {
 bool   right_pressed = false;
 bool   left_pressed  = false;
@@ -8,15 +8,15 @@ size_t r             = 0;
 size_t g             = 0;
 size_t b             = 0;
 
-void Game::create(Fatty::State&) {}
+void Game::create(Fatty::TwoDState&) {}
 
-void Game::destroy(Fatty::State&) {}
+void Game::destroy(Fatty::TwoDState&) {}
 
-void Game::pause(Fatty::State&) {}
+void Game::pause(Fatty::TwoDState&) {}
 
-void Game::resume(Fatty::State&) {}
+void Game::resume(Fatty::TwoDState&) {}
 
-void Game::key_pressed(Fatty::State&, const sf::Event::KeyEvent& key)
+void Game::key_pressed(Fatty::TwoDState&, const sf::Event::KeyEvent& key)
 {
   switch (key.code)
   {
@@ -31,7 +31,7 @@ void Game::key_pressed(Fatty::State&, const sf::Event::KeyEvent& key)
   }
 }
 
-void Game::key_released(Fatty::State&, const sf::Event::KeyEvent& key)
+void Game::key_released(Fatty::TwoDState&, const sf::Event::KeyEvent& key)
 {
   switch (key.code)
   {
@@ -46,7 +46,7 @@ void Game::key_released(Fatty::State&, const sf::Event::KeyEvent& key)
   }
 }
 
-void Game::tick(Fatty::State&)
+void Game::tick(Fatty::TwoDState&)
 {
   if (left_pressed)
   {
@@ -58,6 +58,9 @@ void Game::tick(Fatty::State&)
   }
 }
 
-void Game::draw(Fatty::State& state) { state.window.clear(sf::Color(r, g, b)); }
+void Game::draw(Fatty::TwoDState& state)
+{
+  state.window.clear(sf::Color(r, g, b));
+}
 
-}  // namespace Colors
+}  // namespace Sample
