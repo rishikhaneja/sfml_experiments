@@ -8,7 +8,15 @@
 
 namespace Sample
 {
-// Shader sources
+decltype(std::chrono::high_resolution_clock::now()) t_start;
+bool                                                right_pressed = false;
+bool                                                left_pressed  = false;
+size_t                                              r             = 0;
+size_t                                              g             = 0;
+size_t                                              b             = 0;
+GLuint                                              vao;
+GLuint                                              vbo;
+GLfloat       vertices[]     = {0.0f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f};
 const GLchar* vertexSource   = R"glsl(
     #version 150 core
     in vec2 position;
@@ -26,23 +34,11 @@ const GLchar* fragmentSource = R"glsl(
         outColor = vec4(triangleColor, 1.0);
     }
 )glsl";
-
-bool   right_pressed = false;
-bool   left_pressed  = false;
-size_t r             = 0;
-size_t g             = 0;
-size_t b             = 0;
-
-decltype(std::chrono::high_resolution_clock::now()) t_start;
-
-GLuint  vao;
-GLuint  vbo;
-GLfloat vertices[] = {0.0f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f};
-GLuint  vertexShader;
-GLuint  fragmentShader;
-GLuint  shaderProgram;
-GLint   uniColor;
-GLint   posAttrib;
+GLuint        vertexShader;
+GLuint        fragmentShader;
+GLuint        shaderProgram;
+GLint         uniColor;
+GLint         posAttrib;
 
 void Game::create(Fatty::ThreeDState&)
 {

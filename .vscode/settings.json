@@ -1,3 +1,7 @@
 {
-    "C_Cpp.configurationWarnings": "Disabled"
+    "C_Cpp.configurationWarnings": "Disabled",
+    "files.associations": {
+        ".clang-format": "yaml",
+        "chrono": "cpp"
+    }
 }
