@@ -25,7 +25,7 @@ int Main(Game& game, const char* name)
   settings.antialiasingLevel = 2;  // Optional
   settings.majorVersion      = 3;
   settings.minorVersion      = 2;
-  settings.attributeFlags    = sf::ContextSettings::Core;
+  settings.attributeFlags    = sf::ContextSettings::Attribute::Core;
 
   Window window(sf::VideoMode(800, 600), name, sf::Style::Default, settings);
   window.setActive(true);

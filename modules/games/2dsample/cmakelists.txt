@@ -15,5 +15,5 @@ target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
 endif()
 
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
-    CXX_STANDARD 11
+    CXX_STANDARD 17
 )
