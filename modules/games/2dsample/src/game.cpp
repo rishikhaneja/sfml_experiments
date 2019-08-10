@@ -16,7 +16,7 @@ void Game::pause(Fatty::TwoDState&) {}
 
 void Game::resume(Fatty::TwoDState&) {}
 
-void Game::key_pressed(Fatty::TwoDState&, const sf::Event::KeyEvent& key)
+void Game::keyPressed(Fatty::TwoDState&, const sf::Event::KeyEvent& key)
 {
   switch (key.code)
   {
@@ -31,7 +31,7 @@ void Game::key_pressed(Fatty::TwoDState&, const sf::Event::KeyEvent& key)
   }
 }
 
-void Game::key_released(Fatty::TwoDState&, const sf::Event::KeyEvent& key)
+void Game::keyReleased(Fatty::TwoDState&, const sf::Event::KeyEvent& key)
 {
   switch (key.code)
   {

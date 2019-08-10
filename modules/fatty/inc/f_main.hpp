@@ -10,8 +10,8 @@ Game is any class with member methods:
     void destroy(Fatty::TwoDState&);
     void pause(Fatty::TwoDState&);
     void resume(Fatty::TwoDState&);
-    void key_pressed(Fatty::TwoDState&, const sf::Event::KeyEvent&);
-    void key_released(Fatty::TwoDState&, const sf::Event::KeyEvent&);
+    void keyPressed(Fatty::TwoDState&, const sf::Event::KeyEvent&);
+    void keyReleased(Fatty::TwoDState&, const sf::Event::KeyEvent&);
     void tick(Fatty::TwoDState&);
     void draw(Fatty::TwoDState&);
 */
@@ -48,11 +48,11 @@ int Main(Game& game, const char* name)
           break;
 
         case sf::Event::KeyPressed:
-          game.key_pressed(state, event.key);
+          game.keyPressed(state, event.key);
           break;
 
         case sf::Event::KeyReleased:
-          game.key_released(state, event.key);
+          game.keyReleased(state, event.key);
           break;
 
         case sf::Event::LostFocus:
