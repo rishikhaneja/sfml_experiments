@@ -1,3 +1,6 @@
+// TODO:
+// use RAII for GL objects
+
 #define GLEW_STATIC
 
 #include "game.hpp"
@@ -11,26 +14,47 @@
 
 namespace Sample
 {
-constexpr GLfloat s_vertices[]     = {0.0f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f};
-const GLchar*     s_vertexSource   = R"glsl(
+constexpr GLfloat s_vertices[] = {
+    -0.5f, 0.5f,  1.0f, 0.0f, 0.0f,  // Top-left, Red
+    0.5f,  0.5f,  0.0f, 1.0f, 0.0f,  // Top-right, Green
+    0.5f,  -0.5f, 0.0f, 0.0f, 1.0f,  // Bottom-right, Blue
+    -0.5f, -0.5f, 1.0f, 1.0f, 1.0f   // Bottom-left, White
+};
+constexpr GLuint s_elements[]     = {0, 1, 2, 2, 3, 0};
+const GLchar*    s_vertexSource   = R"glsl(
     #version 150 core
+
     in vec2 position;
+    in vec3 color;
+
+    out vec3 Color;
+
     void main()
     {
-        gl_Position = vec4(position, 0.0, 1.0);
+        Color = color;
+        gl_Position = vec4(position, rand(), 1.0);
     }
 )glsl";
-const GLchar*     s_fragmentSource = R"glsl(
+const GLchar*    s_fragmentSource = R"glsl(
     #version 150 core
-    out vec4 outColor;
+
     uniform vec3 triangleColor;
+
+    in vec3 Color;
+
+    out vec4 outColor;
+
     void main()
     {
-        outColor = vec4(triangleColor, 1.0);
+        // outColor = vec4(triangleColor, 1.0);
+
+        outColor = vec4(Color, triangleColor.r);
     }
 )glsl";
-constexpr auto    s_pie            = 3.14159f;
-constexpr auto    s_sineWave       = [](float time, float freq = 1.0f) {
+// TODO:
+// move to fatty
+constexpr auto s_pie      = 3.14159f;
+constexpr auto s_sineWave = [](float time, float freq = 1.0f) {
   return (sin(2 * s_pie * freq * time) + 1) / 2;
 };
 
@@ -44,11 +68,13 @@ struct Game::Impl
   size_t                                              m_b            = 0;
   GLuint                                              m_vao;
   GLuint                                              m_vbo;
+  GLuint                                              m_ebo;
   GLuint                                              m_vertexShader;
   GLuint                                              m_fragmentShader;
   GLuint                                              m_shaderProgram;
   GLint                                               m_uniColor;
   GLint                                               m_posAttrib;
+  GLint                                               m_colAttrib;
 
   Impl()  = default;
   ~Impl() = default;
@@ -57,6 +83,10 @@ struct Game::Impl
   {
     glewExperimental = GL_TRUE;
     glewInit();
+
+    // Enable alpha blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
 
   void initVao()
@@ -70,6 +100,14 @@ struct Game::Impl
     glGenBuffers(1, &m_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(s_vertices), s_vertices,
+                 GL_STATIC_DRAW);
+  }
+
+  void initEbo()
+  {
+    glGenBuffers(1, &m_ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(s_elements), s_elements,
                  GL_STATIC_DRAW);
   }
 
@@ -114,7 +152,12 @@ struct Game::Impl
     // Specify the layout of the vertex data
     m_posAttrib = glGetAttribLocation(m_shaderProgram, "position");
     glEnableVertexAttribArray(m_posAttrib);
-    glVertexAttribPointer(m_posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(m_posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
+                          0);
+    m_colAttrib = glGetAttribLocation(m_shaderProgram, "color");
+    glEnableVertexAttribArray(m_colAttrib);
+    glVertexAttribPointer(m_colAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
+                          (void*)(2 * sizeof(float)));
 
     // Get the location of the color uniform
     m_uniColor = glGetUniformLocation(m_shaderProgram, "triangleColor");
@@ -122,6 +165,8 @@ struct Game::Impl
 
   void checkGLError()
   {
+    // TODO:
+    // understand why this doesnt work, and enable it
     // assert(glGetError() == GL_FALSE);
   }
 
@@ -132,6 +177,8 @@ struct Game::Impl
     initVao();
 
     initVbo();
+
+    initEbo();
 
     initVertexShader();
 
@@ -210,7 +257,7 @@ struct Game::Impl
     float delta = std::chrono::duration_cast<std::chrono::duration<float>>(
                       now - m_startTimestamp)
                       .count();
-    glUniform3f(m_uniColor, s_sineWave(delta), 0.0f, 0.0f);
+    glUniform3f(m_uniColor, s_sineWave(delta, 0.5), 0.0f, 0.0f);
   }
 
   void tick(Fatty::ThreeDState&)
@@ -226,7 +273,10 @@ struct Game::Impl
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Draw a triangle from the 3 s_vertices
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Draw two triangles to form a rectangle
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     checkGLError();
   }
