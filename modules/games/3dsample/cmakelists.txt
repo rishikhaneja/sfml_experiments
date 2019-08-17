@@ -20,3 +20,5 @@ target_link_libraries(${EXECUTABLE_NAME} ${OPENGL_LIBRARIES})
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
     CXX_STANDARD 17
 )
+
+file(COPY assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

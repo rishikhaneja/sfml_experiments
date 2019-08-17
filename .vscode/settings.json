@@ -2,6 +2,8 @@
     "C_Cpp.configurationWarnings": "Disabled",
     "files.associations": {
         ".clang-format": "yaml",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "__tuple": "cpp",
+        "array": "cpp"
     }
 }

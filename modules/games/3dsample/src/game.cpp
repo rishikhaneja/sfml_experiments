@@ -6,19 +6,22 @@
 #include "game.hpp"
 
 #include <GL/glew.h>
+#include <SFML/Graphics/Image.hpp>
 #include <SFML/OpenGL.hpp>
 
 #include <math.h>
+#include <array>
 #include <chrono>
 #include <iostream>
 
 namespace Sample
 {
 constexpr GLfloat s_vertices[] = {
-    -0.5f, 0.5f,  1.0f, 0.0f, 0.0f,  // Top-left, Red
-    0.5f,  0.5f,  0.0f, 1.0f, 0.0f,  // Top-right, Green
-    0.5f,  -0.5f, 0.0f, 0.0f, 1.0f,  // Bottom-right, Blue
-    -0.5f, -0.5f, 1.0f, 1.0f, 1.0f   // Bottom-left, White
+    //  Position      Color             Texcoords
+    -0.5f, 0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,  // Top-left
+    0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // Top-right
+    0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,  // Bottom-right
+    -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f   // Bottom-left
 };
 constexpr GLuint s_elements[]     = {0, 1, 2, 2, 3, 0};
 const GLchar*    s_vertexSource   = R"glsl(
@@ -26,36 +29,50 @@ const GLchar*    s_vertexSource   = R"glsl(
 
     in vec2 position;
     in vec3 color;
+    in vec2 texcoord;
 
     out vec3 Color;
+    out vec2 Texcoord;
 
     void main()
     {
-        Color = color;
-        gl_Position = vec4(position, 0.0, 1.0);
+      Color = color;
+      Texcoord = texcoord;
+      gl_Position = vec4(position, 0.0, 1.0);
     }
 )glsl";
 const GLchar*    s_fragmentSource = R"glsl(
     #version 150 core
 
-    uniform vec3 triangleColor;
+    uniform float time;
+    uniform sampler2D tex1;
+    uniform sampler2D tex2;
 
     in vec3 Color;
+    in vec2 Texcoord;
 
     out vec4 outColor;
 
+    const float pi = 3.14159;
+
+    float sineWave(float time, float freq)
+    {
+      return (sin(2 * pi * freq * time) + 1) / 2;
+    }
+
     void main()
     {
-        // outColor = vec4(triangleColor, 1.0);
-
-        outColor = vec4(Color, triangleColor.r);
+      vec4 colTex1 = texture(tex1, Texcoord);
+      vec4 colTex2 = texture(tex2, Texcoord);
+      vec4 colBlended = mix(colTex1, colTex2, sineWave(time, 1.0/4));
+      outColor = colBlended * vec4(Color, sineWave(time, 1.0/2));
     }
 )glsl";
 // TODO:
 // move to fatty
-constexpr auto s_pie      = 3.14159f;
+constexpr auto s_pi       = 3.14159f;
 constexpr auto s_sineWave = [](float time, float freq = 1.0f) {
-  return (sin(2 * s_pie * freq * time) + 1) / 2;
+  return (sin(2 * s_pi * freq * time) + 1) / 2;
 };
 
 struct Game::Impl
@@ -69,12 +86,14 @@ struct Game::Impl
   GLuint                                              m_vao;
   GLuint                                              m_vbo;
   GLuint                                              m_ebo;
+  GLuint                                              m_textures[2];
   GLuint                                              m_vertexShader;
   GLuint                                              m_fragmentShader;
   GLuint                                              m_shaderProgram;
-  GLint                                               m_uniColor;
+  GLint                                               m_uniTime;
   GLint                                               m_posAttrib;
   GLint                                               m_colAttrib;
+  GLint                                               m_texAttrib;
 
   Impl()  = default;
   ~Impl() = default;
@@ -152,15 +171,58 @@ struct Game::Impl
     // Specify the layout of the vertex data
     m_posAttrib = glGetAttribLocation(m_shaderProgram, "position");
     glEnableVertexAttribArray(m_posAttrib);
-    glVertexAttribPointer(m_posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
+    glVertexAttribPointer(m_posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
                           0);
     m_colAttrib = glGetAttribLocation(m_shaderProgram, "color");
     glEnableVertexAttribArray(m_colAttrib);
-    glVertexAttribPointer(m_colAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
+    glVertexAttribPointer(m_colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
                           (void*)(2 * sizeof(float)));
 
-    // Get the location of the color uniform
-    m_uniColor = glGetUniformLocation(m_shaderProgram, "triangleColor");
+    m_texAttrib = glGetAttribLocation(m_shaderProgram, "texcoord");
+    glEnableVertexAttribArray(m_texAttrib);
+    glVertexAttribPointer(m_texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
+                          (void*)(5 * sizeof(float)));
+
+    m_uniTime = glGetUniformLocation(m_shaderProgram, "time");
+  }
+
+  void initTextures()
+  {
+    glGenTextures(2, m_textures);
+    {
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_textures[0]);
+      {
+        sf::Image image;
+        bool      success = image.loadFromFile("assets/lenna.png");
+        assert(success);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getSize().x,
+                     image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     image.getPixelsPtr());
+      }
+      glUniform1i(glGetUniformLocation(m_shaderProgram, "tex1"), 0);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+    {
+      glActiveTexture(GL_TEXTURE1);
+      glBindTexture(GL_TEXTURE_2D, m_textures[1]);
+      {
+        sf::Image image;
+        bool      success = image.loadFromFile("assets/ana.jpg");
+        assert(success);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getSize().x,
+                     image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     image.getPixelsPtr());
+      }
+      glUniform1i(glGetUniformLocation(m_shaderProgram, "tex2"), 1);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
   }
 
   void checkGLError()
@@ -187,6 +249,8 @@ struct Game::Impl
     initProgram();
 
     initAttribsAndUniforms();
+
+    initTextures();
 
     checkGLError();
 
@@ -250,20 +314,16 @@ struct Game::Impl
     }
   }
 
-  void updateForegroundColor()
+  void tick(Fatty::ThreeDState&)
   {
+    updateBackgroundColor();
+
     // TODO: move to fatty
     auto  now   = std::chrono::high_resolution_clock::now();
     float delta = std::chrono::duration_cast<std::chrono::duration<float>>(
                       now - m_startTimestamp)
                       .count();
-    glUniform3f(m_uniColor, s_sineWave(delta, 0.5), 0.0f, 0.0f);
-  }
-
-  void tick(Fatty::ThreeDState&)
-  {
-    updateBackgroundColor();
-    updateForegroundColor();
+    glUniform1f(m_uniTime, delta);
   }
 
   void draw(Fatty::ThreeDState& state)
