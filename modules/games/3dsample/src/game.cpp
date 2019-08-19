@@ -27,8 +27,8 @@ constexpr GLfloat s_vertices[] = {
     0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,  // Bottom-right
     -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f   // Bottom-left
 };
-constexpr GLuint s_elements[]     = {0, 1, 2, 2, 3, 0};
-const GLchar*    s_vertexSource   = R"glsl(
+constexpr GLuint s_elements[] = {0, 1, 2, 2, 3, 0};
+const GLchar*    s_vertexSource = R"glsl(
     #version 150 core
 
     in vec2 position;
@@ -38,13 +38,15 @@ const GLchar*    s_vertexSource   = R"glsl(
     out vec3 Color;
     out vec2 Texcoord;
 
-    uniform mat4 transforms;
+    uniform mat4 model;
+    uniform mat4 view;
+    uniform mat4 projection;
 
     void main()
     {
       Color = color;
       Texcoord = texcoord;
-      gl_Position = transforms * vec4(position, 0.0, 1.0);
+      gl_Position = projection * view * model * vec4(position, 0.0, 1.0);
     }
 )glsl";
 const GLchar*    s_fragmentSource = R"glsl(
@@ -91,7 +93,7 @@ const GLchar*    s_fragmentSource = R"glsl(
 )glsl";
 // TODO:
 // move to fatty
-constexpr auto s_pi       = 3.14159f;
+constexpr auto s_pi = 3.14159f;
 constexpr auto s_sineWave = [](float time, float freq = 1.0f) {
   return (sin(2 * s_pi * freq * time) + 1) / 2;
 };
@@ -100,24 +102,27 @@ struct Game::Impl
 {
   decltype(std::chrono::high_resolution_clock::now()) m_startTimestamp;
   bool                                                m_rightPressed = false;
-  bool                                                m_leftPressed  = false;
-  size_t                                              m_r            = 0;
-  size_t                                              m_g            = 0;
-  size_t                                              m_b            = 0;
+  bool                                                m_leftPressed = false;
+  size_t                                              m_r = 0;
+  size_t                                              m_g = 0;
+  size_t                                              m_b = 0;
   GLuint                                              m_vao;
   GLuint                                              m_vbo;
   GLuint                                              m_ebo;
   GLuint                                              m_textures[2];
+  glm::mat4                                           m_view;
   GLuint                                              m_vertexShader;
   GLuint                                              m_fragmentShader;
   GLuint                                              m_shaderProgram;
   GLint                                               m_uniTime;
-  GLint                                               m_uniTranforms;
+  GLint                                               m_uniModel;
+  GLint                                               m_uniView;
+  GLint                                               m_uniProjection;
   GLint                                               m_posAttrib;
   GLint                                               m_colAttrib;
   GLint                                               m_texAttrib;
 
-  Impl()  = default;
+  Impl() = default;
   ~Impl() = default;
 
   void initGlew()
@@ -249,9 +254,24 @@ struct Game::Impl
 
   void initTransforms()
   {
-    m_uniTranforms       = glGetUniformLocation(m_shaderProgram, "transforms");
-    glm::mat4 transforms = glm::mat4(1.0f);
-    glUniformMatrix4fv(m_uniTranforms, 1, GL_FALSE, glm::value_ptr(transforms));
+    // model
+    m_uniModel = glGetUniformLocation(m_shaderProgram, "model");
+    glm::mat4 model = glm::mat4(1.0f);
+    glUniformMatrix4fv(m_uniModel, 1, GL_FALSE, glm::value_ptr(model));
+
+    // view
+    m_uniView = glGetUniformLocation(m_shaderProgram, "view");
+    m_view =
+        glm::lookAt(glm::vec3(1.2f, 1.2f, 1.2f), glm::vec3(0.0f, 0.0f, 0.0f),
+                    glm::vec3(0.0f, 0.0f, 1.0f));
+    glUniformMatrix4fv(m_uniView, 1, GL_FALSE, glm::value_ptr(m_view));
+
+    // projection
+    m_uniProjection = glGetUniformLocation(m_shaderProgram, "projection");
+    glm::mat4 projection =
+        glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 10.0f);
+    glUniformMatrix4fv(m_uniProjection, 1, GL_FALSE,
+                       glm::value_ptr(projection));
   }
 
   void checkGLError()
@@ -347,17 +367,25 @@ struct Game::Impl
 
   void updateTransforms(float delta)
   {
-    glm::mat4 transforms =
-        glm::rotate(glm::mat4(1.0f), delta * glm::radians(180.0f),
-                    glm::vec3(0.0f, 0.0f, 1.0f));
+    // rotate model
+    glm::mat4 model =
+        glm::rotate(glm::mat4(1.0f), delta, glm::vec3(0.0f, 0.0f, 1.0f));
+    GLfloat s = sin(delta * 5.0f) * 0.25f + 0.75f;
+    model = glm::scale(model, glm::vec3(s, s, s));
+    glUniformMatrix4fv(m_uniModel, 1, GL_FALSE, glm::value_ptr(model));
 
-    glUniformMatrix4fv(m_uniTranforms, 1, GL_FALSE, glm::value_ptr(transforms));
+    // rotate view
+    m_view =
+        glm::lookAt(glm::vec3(1.2f, 1.2f, 1.2f), glm::vec3(0.0f, 0.0f, 0.0f),
+                    glm::vec3(0.0f, 0.0f, 1.0f));
+    m_view = glm::rotate(m_view, delta, glm::vec3(1.0f, 1.0f, 0.0f));
+    glUniformMatrix4fv(m_uniView, 1, GL_FALSE, glm::value_ptr(m_view));
   }
 
   void tick(Fatty::ThreeDState&)
   {
     // TODO: move to fatty
-    auto  now   = std::chrono::high_resolution_clock::now();
+    auto  now = std::chrono::high_resolution_clock::now();
     float delta = std::chrono::duration_cast<std::chrono::duration<float>>(
                       now - m_startTimestamp)
                       .count();
