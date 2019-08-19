@@ -6,6 +6,10 @@
 #include "game.hpp"
 
 #include <GL/glew.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/OpenGL.hpp>
 
@@ -34,11 +38,13 @@ const GLchar*    s_vertexSource   = R"glsl(
     out vec3 Color;
     out vec2 Texcoord;
 
+    uniform mat4 transforms;
+
     void main()
     {
       Color = color;
       Texcoord = texcoord;
-      gl_Position = vec4(position, 0.0, 1.0);
+      gl_Position = transforms * vec4(position, 0.0, 1.0);
     }
 )glsl";
 const GLchar*    s_fragmentSource = R"glsl(
@@ -64,8 +70,23 @@ const GLchar*    s_fragmentSource = R"glsl(
     {
       vec4 colTex1 = texture(tex1, Texcoord);
       vec4 colTex2 = texture(tex2, Texcoord);
-      vec4 colBlended = mix(colTex1, colTex2, sineWave(time, 1.0/4));
-      outColor = colBlended * vec4(Color, sineWave(time, 1.0/2));
+      vec4 colBlended = mix(colTex1, colTex2, sineWave(time, 1.0/8));
+      vec4 colFaded = colBlended * vec4(Color, sineWave(time, 1.0/4));
+      outColor = colFaded;
+
+      // invertion
+      // if (Texcoord.y < 0.5)
+      //     outColor = texture(tex1, Texcoord);
+      // else
+      //     outColor = texture(tex1, vec2(Texcoord.x, 1.0 - Texcoord.y));
+
+      // sea effect
+      // if (Texcoord.y < 0.5)
+      //     outColor = texture(tex1, Texcoord);
+      // else
+      //     outColor = texture(tex1,
+      //         vec2(Texcoord.x + sin(Texcoord.y * 60.0 + time * 2.0) / 30.0, 1.0 - Texcoord.y)
+      //     ) * vec4(0.7, 0.7, 1.0, 1.0);
     }
 )glsl";
 // TODO:
@@ -91,6 +112,7 @@ struct Game::Impl
   GLuint                                              m_fragmentShader;
   GLuint                                              m_shaderProgram;
   GLint                                               m_uniTime;
+  GLint                                               m_uniTranforms;
   GLint                                               m_posAttrib;
   GLint                                               m_colAttrib;
   GLint                                               m_texAttrib;
@@ -225,6 +247,13 @@ struct Game::Impl
     }
   }
 
+  void initTransforms()
+  {
+    m_uniTranforms       = glGetUniformLocation(m_shaderProgram, "transforms");
+    glm::mat4 transforms = glm::mat4(1.0f);
+    glUniformMatrix4fv(m_uniTranforms, 1, GL_FALSE, glm::value_ptr(transforms));
+  }
+
   void checkGLError()
   {
     // TODO:
@@ -251,6 +280,8 @@ struct Game::Impl
     initAttribsAndUniforms();
 
     initTextures();
+
+    initTransforms();
 
     checkGLError();
 
@@ -314,16 +345,28 @@ struct Game::Impl
     }
   }
 
+  void updateTransforms(float delta)
+  {
+    glm::mat4 transforms =
+        glm::rotate(glm::mat4(1.0f), delta * glm::radians(180.0f),
+                    glm::vec3(0.0f, 0.0f, 1.0f));
+
+    glUniformMatrix4fv(m_uniTranforms, 1, GL_FALSE, glm::value_ptr(transforms));
+  }
+
   void tick(Fatty::ThreeDState&)
   {
-    updateBackgroundColor();
-
     // TODO: move to fatty
     auto  now   = std::chrono::high_resolution_clock::now();
     float delta = std::chrono::duration_cast<std::chrono::duration<float>>(
                       now - m_startTimestamp)
                       .count();
+
     glUniform1f(m_uniTime, delta);
+
+    updateBackgroundColor();
+
+    updateTransforms(delta);
   }
 
   void draw(Fatty::ThreeDState& state)
