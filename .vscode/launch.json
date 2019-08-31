@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/modules/games/2dsample/2dsample",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build/modules/games/2dsample",
             "environment": [],
             "externalConsole": false,
             "MIMode": "lldb"
@@ -23,7 +23,7 @@
             "program": "${workspaceFolder}/build/modules/games/3dsample/3dsample",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build/modules/games/3dsample",
             "environment": [],
             "externalConsole": false,
             "MIMode": "lldb"

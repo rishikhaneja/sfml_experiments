@@ -260,6 +260,7 @@ struct Game::Impl {
     m_uniProjection = glGetUniformLocation(m_shaderProgram, "projection");
 
     m_uniColorOverride = glGetUniformLocation(m_shaderProgram, "overrideColor");
+    glUniform3f(m_uniColorOverride, 1.0, 1.0, 1.0);
   }
 
   void initTextures() {
@@ -437,27 +438,40 @@ struct Game::Impl {
   }
 
   void draw(Fatty::ThreeDState &state) {
-    glUniform3f(m_uniColorOverride, 1.0, 1.0, 1.0);
-
     // Clear the screen
-    // glClearColor(m_r / 100.0, m_g / 100.0, m_b / 100.0, 1.0f);
-    glClearColor(1, 1, 1, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     // Draw cube
-    // glUniform3f(m_uniColorOverride, 1.0, 1.0, 1.0);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    // Draw floor
-    // glUniform3f(m_uniColorOverride, 0.0, 0.0, 0.0);
-    glDrawArrays(GL_TRIANGLES, 36, 6);
+    {
+      glEnable(GL_STENCIL_TEST);
 
-    // Draw reflection
-    // glUniform3f(m_uniColorOverride, 1.0, 1.0, 1.0);
-    m_model = glm::scale(glm::translate(m_model, glm::vec3(0, 0, -1)),
-                         glm::vec3(1, 1, -1));
-    glUniformMatrix4fv(m_uniModel, 1, GL_FALSE, glm::value_ptr(m_model));
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+      // Draw floor
+      {
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);  // Always set to 1
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glDepthMask(GL_FALSE);
+        glDrawArrays(GL_TRIANGLES, 36, 6);
+        glDepthMask(GL_TRUE);
+      }
+
+      // Draw reflection
+      {
+        glUniform3f(m_uniColorOverride, 0.3, 0.3, 0.3);
+        glStencilFunc(GL_EQUAL, 1, 0xFF);  // Pass test if stencil value is 1
+        glStencilMask(0x00);  // Don't write anything to stencil buffer
+        m_model = glm::scale(glm::translate(m_model, glm::vec3(0, 0, -1)),
+                             glm::vec3(1, 1, -1));
+        glUniformMatrix4fv(m_uniModel, 1, GL_FALSE, glm::value_ptr(m_model));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glStencilMask(0xFF);  // Set back to default
+        glUniform3f(m_uniColorOverride, 1.0, 1.0, 1.0);
+      }
+
+      glDisable(GL_STENCIL_TEST);
+    }
 
     // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
