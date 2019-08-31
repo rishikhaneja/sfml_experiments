@@ -21,17 +21,52 @@
 namespace Sample
 {
 constexpr GLfloat s_vertices[] = {
-    //  Position      Color             Texcoords
-    -0.5f, 0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,  // Top-left
-    0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // Top-right
-    0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,  // Bottom-right
-    -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f   // Bottom-left
-};
-constexpr GLuint s_elements[] = {0, 1, 2, 2, 3, 0};
-const GLchar*    s_vertexSource = R"glsl(
+    -0.5f, -0.5f, -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.5f,  -0.5f,
+    -0.5f, 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.5f,  0.5f,  -0.5f, 1.0f,
+    1.0f,  1.0f,  1.0f,  1.0f,  0.5f,  0.5f,  -0.5f, 1.0f,  1.0f,  1.0f,
+    1.0f,  1.0f,  -0.5f, 0.5f,  -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,
+    -0.5f, -0.5f, -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
+
+    -0.5f, -0.5f, 0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.5f,  -0.5f,
+    0.5f,  1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.5f,  0.5f,  0.5f,  1.0f,
+    1.0f,  1.0f,  1.0f,  1.0f,  0.5f,  0.5f,  0.5f,  1.0f,  1.0f,  1.0f,
+    1.0f,  1.0f,  -0.5f, 0.5f,  0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  1.0f,
+    -0.5f, -0.5f, 0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
+
+    -0.5f, 0.5f,  0.5f,  1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  -0.5f, 0.5f,
+    -0.5f, 1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  -0.5f, -0.5f, -0.5f, 1.0f,
+    1.0f,  1.0f,  0.0f,  1.0f,  -0.5f, -0.5f, -0.5f, 1.0f,  1.0f,  1.0f,
+    0.0f,  1.0f,  -0.5f, -0.5f, 0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
+    -0.5f, 0.5f,  0.5f,  1.0f,  1.0f,  1.0f,  1.0f,  0.0f,
+
+    0.5f,  0.5f,  0.5f,  1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.5f,  0.5f,
+    -0.5f, 1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 1.0f,
+    1.0f,  1.0f,  0.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 1.0f,  1.0f,  1.0f,
+    0.0f,  1.0f,  0.5f,  -0.5f, 0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
+    0.5f,  0.5f,  0.5f,  1.0f,  1.0f,  1.0f,  1.0f,  0.0f,
+
+    -0.5f, -0.5f, -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.5f,  -0.5f,
+    -0.5f, 1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  0.5f,  -0.5f, 0.5f,  1.0f,
+    1.0f,  1.0f,  1.0f,  0.0f,  0.5f,  -0.5f, 0.5f,  1.0f,  1.0f,  1.0f,
+    1.0f,  0.0f,  -0.5f, -0.5f, 0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,
+
+    -0.5f, 0.5f,  -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.5f,  0.5f,
+    -0.5f, 1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  0.5f,  0.5f,  0.5f,  1.0f,
+    1.0f,  1.0f,  1.0f,  0.0f,  0.5f,  0.5f,  0.5f,  1.0f,  1.0f,  1.0f,
+    1.0f,  0.0f,  -0.5f, 0.5f,  0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
+    -0.5f, 0.5f,  -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,
+
+    -1.0f, -1.0f, -0.5f, 0.0f,  0.0f,  0.0f,  0.0f,  0.0f,  1.0f,  -1.0f,
+    -0.5f, 0.0f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,  -0.5f, 0.0f,
+    0.0f,  0.0f,  1.0f,  1.0f,  1.0f,  1.0f,  -0.5f, 0.0f,  0.0f,  0.0f,
+    1.0f,  1.0f,  -1.0f, 1.0f,  -0.5f, 0.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+    -1.0f, -1.0f, -0.5f, 0.0f,  0.0f,  0.0f,  0.0f,  0.0f};
+// constexpr GLuint s_elements[] = {0, 1, 2, 2, 3, 0};
+const GLchar* s_vertexSource = R"glsl(
     #version 150 core
 
-    in vec2 position;
+    in vec3 position;
     in vec3 color;
     in vec2 texcoord;
 
@@ -42,14 +77,17 @@ const GLchar*    s_vertexSource = R"glsl(
     uniform mat4 view;
     uniform mat4 projection;
 
+    uniform vec3 overrideColor;
+
     void main()
     {
-      Color = color;
+      Color = overrideColor * color;
       Texcoord = texcoord;
-      gl_Position = projection * view * model * vec4(position, 0.0, 1.0);
+      gl_Position = projection * view * model * vec4(position, 1.0);
+      //gl_Position = vec4(position, 1.0);
     }
 )glsl";
-const GLchar*    s_fragmentSource = R"glsl(
+const GLchar* s_fragmentSource = R"glsl(
     #version 150 core
 
     uniform float time;
@@ -73,8 +111,9 @@ const GLchar*    s_fragmentSource = R"glsl(
       vec4 colTex1 = texture(tex1, Texcoord);
       vec4 colTex2 = texture(tex2, Texcoord);
       vec4 colBlended = mix(colTex1, colTex2, sineWave(time, 1.0/8));
-      vec4 colFaded = colBlended * vec4(Color, sineWave(time, 1.0/4));
-      outColor = colFaded;
+      vec4 colColorized = vec4(Color, 1.0) * colBlended;
+      vec4 colFaded = colColorized * vec4(1.0, 1.0, 1.0, sineWave(time, 1.0/4));
+      outColor = vec4(Color, 1.0) * colTex1;
 
       // invertion
       // if (Texcoord.y < 0.5)
@@ -103,29 +142,31 @@ struct Game::Impl
   decltype(std::chrono::high_resolution_clock::now()) m_startTimestamp;
   bool                                                m_rightPressed = false;
   bool                                                m_leftPressed = false;
-  size_t                                              m_r = 0;
-  size_t                                              m_g = 0;
-  size_t                                              m_b = 0;
+  size_t                                              m_r = 1.0;
+  size_t                                              m_g = 1.0;
+  size_t                                              m_b = 1.0;
   GLuint                                              m_vao;
   GLuint                                              m_vbo;
-  GLuint                                              m_ebo;
-  GLuint                                              m_textures[2];
-  glm::mat4                                           m_view;
-  GLuint                                              m_vertexShader;
-  GLuint                                              m_fragmentShader;
-  GLuint                                              m_shaderProgram;
-  GLint                                               m_uniTime;
-  GLint                                               m_uniModel;
-  GLint                                               m_uniView;
-  GLint                                               m_uniProjection;
-  GLint                                               m_posAttrib;
-  GLint                                               m_colAttrib;
-  GLint                                               m_texAttrib;
+  // GLuint                                              m_ebo;
+  GLuint    m_textures[2];
+  glm::mat4 m_view;
+  glm::mat4 m_model;
+  GLuint    m_vertexShader;
+  GLuint    m_fragmentShader;
+  GLuint    m_shaderProgram;
+  GLint     m_uniTime;
+  GLint     m_uniModel;
+  GLint     m_uniView;
+  GLint     m_uniProjection;
+  GLint     m_uniColorOverride;
+  GLint     m_posAttrib;
+  GLint     m_colAttrib;
+  GLint     m_texAttrib;
 
   Impl() = default;
   ~Impl() = default;
 
-  void initGlew()
+  void initGl()
   {
     glewExperimental = GL_TRUE;
     glewInit();
@@ -133,6 +174,9 @@ struct Game::Impl
     // Enable alpha blending
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Enable depth test
+    glEnable(GL_DEPTH_TEST);
   }
 
   void initVao()
@@ -151,10 +195,10 @@ struct Game::Impl
 
   void initEbo()
   {
-    glGenBuffers(1, &m_ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(s_elements), s_elements,
-                 GL_STATIC_DRAW);
+    // glGenBuffers(1, &m_ebo);
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(s_elements), s_elements,
+    //              GL_STATIC_DRAW);
   }
 
   void initVertexShader()
@@ -198,19 +242,24 @@ struct Game::Impl
     // Specify the layout of the vertex data
     m_posAttrib = glGetAttribLocation(m_shaderProgram, "position");
     glEnableVertexAttribArray(m_posAttrib);
-    glVertexAttribPointer(m_posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
+    glVertexAttribPointer(m_posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                           0);
     m_colAttrib = glGetAttribLocation(m_shaderProgram, "color");
     glEnableVertexAttribArray(m_colAttrib);
-    glVertexAttribPointer(m_colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
-                          (void*)(2 * sizeof(float)));
+    glVertexAttribPointer(m_colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                          (void*)(3 * sizeof(float)));
 
     m_texAttrib = glGetAttribLocation(m_shaderProgram, "texcoord");
     glEnableVertexAttribArray(m_texAttrib);
-    glVertexAttribPointer(m_texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
-                          (void*)(5 * sizeof(float)));
+    glVertexAttribPointer(m_texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                          (void*)(6 * sizeof(float)));
 
     m_uniTime = glGetUniformLocation(m_shaderProgram, "time");
+    m_uniModel = glGetUniformLocation(m_shaderProgram, "model");
+    m_uniView = glGetUniformLocation(m_shaderProgram, "view");
+    m_uniProjection = glGetUniformLocation(m_shaderProgram, "projection");
+
+    m_uniColorOverride = glGetUniformLocation(m_shaderProgram, "overrideColor");
   }
 
   void initTextures()
@@ -255,21 +304,20 @@ struct Game::Impl
   void initTransforms()
   {
     // model
-    m_uniModel = glGetUniformLocation(m_shaderProgram, "model");
-    glm::mat4 model = glm::mat4(1.0f);
-    glUniformMatrix4fv(m_uniModel, 1, GL_FALSE, glm::value_ptr(model));
+    m_model = glm::mat4(1.0f);
+    glUniformMatrix4fv(m_uniModel, 1, GL_FALSE, glm::value_ptr(m_model));
 
     // view
-    m_uniView = glGetUniformLocation(m_shaderProgram, "view");
     m_view =
-        glm::lookAt(glm::vec3(1.2f, 1.2f, 1.2f), glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::lookAt(glm::vec3(2.5f, 2.5f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f),
                     glm::vec3(0.0f, 0.0f, 1.0f));
+    m_uniView = glGetUniformLocation(m_shaderProgram, "view");
     glUniformMatrix4fv(m_uniView, 1, GL_FALSE, glm::value_ptr(m_view));
 
     // projection
-    m_uniProjection = glGetUniformLocation(m_shaderProgram, "projection");
     glm::mat4 projection =
         glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 1.0f, 10.0f);
+    m_uniProjection = glGetUniformLocation(m_shaderProgram, "projection");
     glUniformMatrix4fv(m_uniProjection, 1, GL_FALSE,
                        glm::value_ptr(projection));
   }
@@ -283,7 +331,7 @@ struct Game::Impl
 
   void create(Fatty::ThreeDState&)
   {
-    initGlew();
+    initGl();
 
     initVao();
 
@@ -368,18 +416,23 @@ struct Game::Impl
   void updateTransforms(float delta)
   {
     // rotate model
-    glm::mat4 model =
-        glm::rotate(glm::mat4(1.0f), delta, glm::vec3(0.0f, 0.0f, 1.0f));
-    GLfloat s = sin(delta * 5.0f) * 0.25f + 0.75f;
-    model = glm::scale(model, glm::vec3(s, s, s));
-    glUniformMatrix4fv(m_uniModel, 1, GL_FALSE, glm::value_ptr(model));
+    m_model = glm::rotate(glm::mat4(1.0f), delta, glm::vec3(0.0f, 0.0f, 1.0f));
+
+    // scale model
+    // GLfloat scale = sin(delta * 5.0f) * 0.25f + 0.75f;
+    // model = glm::scale(model, glm::vec3(scale, scale, scale));
+
+    // update model
+    glUniformMatrix4fv(m_uniModel, 1, GL_FALSE, glm::value_ptr(m_model));
 
     // rotate view
-    m_view =
-        glm::lookAt(glm::vec3(1.2f, 1.2f, 1.2f), glm::vec3(0.0f, 0.0f, 0.0f),
-                    glm::vec3(0.0f, 0.0f, 1.0f));
-    m_view = glm::rotate(m_view, delta, glm::vec3(1.0f, 1.0f, 0.0f));
-    glUniformMatrix4fv(m_uniView, 1, GL_FALSE, glm::value_ptr(m_view));
+    // m_view =
+    //     glm::lookAt(glm::vec3(1.2f, 1.2f, 1.2f), glm::vec3(0.0f, 0.0f, 0.0f),
+    //                 glm::vec3(0.0f, 0.0f, 1.0f));
+    // m_view = glm::rotate(m_view, delta, glm::vec3(1.0f, 1.0f, 0.0f));
+
+    // update view
+    // glUniformMatrix4fv(m_uniView, 1, GL_FALSE, glm::value_ptr(m_view));
   }
 
   void tick(Fatty::ThreeDState&)
@@ -400,14 +453,26 @@ struct Game::Impl
   void draw(Fatty::ThreeDState& state)
   {
     // Clear the screen
-    glClearColor(m_r / 100.0, m_g / 100.0, m_b / 100.0, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    // glClearColor(m_r / 100.0, m_g / 100.0, m_b / 100.0, 1.0f);
+    glClearColor(1, 1, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Draw a triangle from the 3 s_vertices
-    // glDrawArrays(GL_TRIANGLES, 0, 3);
+    // Draw cube
+    glUniform3f(m_uniColorOverride, 1.0, 1.0, 1.0);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    // Draw two triangles to form a rectangle
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    // Draw floor
+    // glUniform3f(m_uniColorOverride, 0.0, 0.0, 0.0);
+    glDrawArrays(GL_TRIANGLES, 36, 6);
+
+    // Draw reflection
+    // glUniform3f(m_uniColorOverride, 1.0, 1.0, 1.0);
+    m_model = glm::scale(glm::translate(m_model, glm::vec3(0, 0, -1)),
+                         glm::vec3(1, 1, -1));
+    glUniformMatrix4fv(m_uniModel, 1, GL_FALSE, glm::value_ptr(m_model));
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     checkGLError();
   }
