@@ -18,52 +18,61 @@
 #include <chrono>
 #include <iostream>
 
-namespace Sample
-{
+namespace Sample {
 constexpr GLfloat s_vertices[] = {
-    -0.5f, -0.5f, -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.5f,  -0.5f,
-    -0.5f, 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.5f,  0.5f,  -0.5f, 1.0f,
-    1.0f,  1.0f,  1.0f,  1.0f,  0.5f,  0.5f,  -0.5f, 1.0f,  1.0f,  1.0f,
-    1.0f,  1.0f,  -0.5f, 0.5f,  -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,
-    -0.5f, -0.5f, -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
-
-    -0.5f, -0.5f, 0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  0.5f,  -0.5f,
-    0.5f,  1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.5f,  0.5f,  0.5f,  1.0f,
-    1.0f,  1.0f,  1.0f,  1.0f,  0.5f,  0.5f,  0.5f,  1.0f,  1.0f,  1.0f,
-    1.0f,  1.0f,  -0.5f, 0.5f,  0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  1.0f,
-    -0.5f, -0.5f, 0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
-
-    -0.5f, 0.5f,  0.5f,  1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  -0.5f, 0.5f,
-    -0.5f, 1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  -0.5f, -0.5f, -0.5f, 1.0f,
-    1.0f,  1.0f,  0.0f,  1.0f,  -0.5f, -0.5f, -0.5f, 1.0f,  1.0f,  1.0f,
-    0.0f,  1.0f,  -0.5f, -0.5f, 0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
-    -0.5f, 0.5f,  0.5f,  1.0f,  1.0f,  1.0f,  1.0f,  0.0f,
-
-    0.5f,  0.5f,  0.5f,  1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.5f,  0.5f,
-    -0.5f, 1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 1.0f,
-    1.0f,  1.0f,  0.0f,  1.0f,  0.5f,  -0.5f, -0.5f, 1.0f,  1.0f,  1.0f,
-    0.0f,  1.0f,  0.5f,  -0.5f, 0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
-    0.5f,  0.5f,  0.5f,  1.0f,  1.0f,  1.0f,  1.0f,  0.0f,
-
-    -0.5f, -0.5f, -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.5f,  -0.5f,
-    -0.5f, 1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  0.5f,  -0.5f, 0.5f,  1.0f,
-    1.0f,  1.0f,  1.0f,  0.0f,  0.5f,  -0.5f, 0.5f,  1.0f,  1.0f,  1.0f,
-    1.0f,  0.0f,  -0.5f, -0.5f, 0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,
-
-    -0.5f, 0.5f,  -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.5f,  0.5f,
-    -0.5f, 1.0f,  1.0f,  1.0f,  1.0f,  1.0f,  0.5f,  0.5f,  0.5f,  1.0f,
-    1.0f,  1.0f,  1.0f,  0.0f,  0.5f,  0.5f,  0.5f,  1.0f,  1.0f,  1.0f,
-    1.0f,  0.0f,  -0.5f, 0.5f,  0.5f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f,
-    -0.5f, 0.5f,  -0.5f, 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,
-
-    -1.0f, -1.0f, -0.5f, 0.0f,  0.0f,  0.0f,  0.0f,  0.0f,  1.0f,  -1.0f,
-    -0.5f, 0.0f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,  -0.5f, 0.0f,
-    0.0f,  0.0f,  1.0f,  1.0f,  1.0f,  1.0f,  -0.5f, 0.0f,  0.0f,  0.0f,
-    1.0f,  1.0f,  -1.0f, 1.0f,  -0.5f, 0.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-    -1.0f, -1.0f, -0.5f, 0.0f,  0.0f,  0.0f,  0.0f,  0.0f};
+    //
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,  //
+    0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,   //
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,    //
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,    //
+    -0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,   //
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,  //
+    //
+    -0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,  //
+    0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,   //
+    0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,    //
+    0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,    //
+    -0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,   //
+    -0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,  //
+    //
+    -0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,    //
+    -0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,   //
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,  //
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,  //
+    -0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,   //
+    -0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,    //
+    //
+    0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,    //
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,   //
+    0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,  //
+    0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,  //
+    0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,   //
+    0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,    //
+    //
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,  //
+    0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,   //
+    0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,    //
+    0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,    //
+    -0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,   //
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,  //
+    //
+    -0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,  //
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,   //
+    0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,    //
+    0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,    //
+    -0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,   //
+    -0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,  //
+    //
+    -1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  //
+    1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,   //
+    1.0f, 1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,    //
+    1.0f, 1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f,    //
+    -1.0f, 1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,   //
+    -1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f   //
+                                                        //
+};
 // constexpr GLuint s_elements[] = {0, 1, 2, 2, 3, 0};
-const GLchar* s_vertexSource = R"glsl(
+const GLchar *s_vertexSource = R"glsl(
     #version 150 core
 
     in vec3 position;
@@ -87,7 +96,7 @@ const GLchar* s_vertexSource = R"glsl(
       //gl_Position = vec4(position, 1.0);
     }
 )glsl";
-const GLchar* s_fragmentSource = R"glsl(
+const GLchar *s_fragmentSource = R"glsl(
     #version 150 core
 
     uniform float time;
@@ -137,37 +146,35 @@ constexpr auto s_sineWave = [](float time, float freq = 1.0f) {
   return (sin(2 * s_pi * freq * time) + 1) / 2;
 };
 
-struct Game::Impl
-{
+struct Game::Impl {
   decltype(std::chrono::high_resolution_clock::now()) m_startTimestamp;
-  bool                                                m_rightPressed = false;
-  bool                                                m_leftPressed = false;
-  size_t                                              m_r = 1.0;
-  size_t                                              m_g = 1.0;
-  size_t                                              m_b = 1.0;
-  GLuint                                              m_vao;
-  GLuint                                              m_vbo;
-  // GLuint                                              m_ebo;
-  GLuint    m_textures[2];
+  bool m_rightPressed = false;
+  bool m_leftPressed = false;
+  size_t m_r = 1.0;
+  size_t m_g = 1.0;
+  size_t m_b = 1.0;
+  GLuint m_vao;
+  GLuint m_vbo;
+  // GLuint m_ebo;
+  GLuint m_textures[2];
   glm::mat4 m_view;
   glm::mat4 m_model;
-  GLuint    m_vertexShader;
-  GLuint    m_fragmentShader;
-  GLuint    m_shaderProgram;
-  GLint     m_uniTime;
-  GLint     m_uniModel;
-  GLint     m_uniView;
-  GLint     m_uniProjection;
-  GLint     m_uniColorOverride;
-  GLint     m_posAttrib;
-  GLint     m_colAttrib;
-  GLint     m_texAttrib;
+  GLuint m_vertexShader;
+  GLuint m_fragmentShader;
+  GLuint m_shaderProgram;
+  GLint m_uniTime;
+  GLint m_uniModel;
+  GLint m_uniView;
+  GLint m_uniProjection;
+  GLint m_uniColorOverride;
+  GLint m_posAttrib;
+  GLint m_colAttrib;
+  GLint m_texAttrib;
 
   Impl() = default;
   ~Impl() = default;
 
-  void initGl()
-  {
+  void initGl() {
     glewExperimental = GL_TRUE;
     glewInit();
 
@@ -179,30 +186,26 @@ struct Game::Impl
     glEnable(GL_DEPTH_TEST);
   }
 
-  void initVao()
-  {
+  void initVao() {
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
   }
 
-  void initVbo()
-  {
+  void initVbo() {
     glGenBuffers(1, &m_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(s_vertices), s_vertices,
                  GL_STATIC_DRAW);
   }
 
-  void initEbo()
-  {
+  void initEbo() {
     // glGenBuffers(1, &m_ebo);
     // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
     // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(s_elements), s_elements,
     //              GL_STATIC_DRAW);
   }
 
-  void initVertexShader()
-  {
+  void initVertexShader() {
     m_vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(m_vertexShader, 1, &s_vertexSource, NULL);
     glCompileShader(m_vertexShader);
@@ -214,8 +217,7 @@ struct Game::Impl
     assert(status == GL_TRUE);
   }
 
-  void initFragmentShader()
-  {
+  void initFragmentShader() {
     m_fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(m_fragmentShader, 1, &s_fragmentSource, NULL);
     glCompileShader(m_fragmentShader);
@@ -227,8 +229,7 @@ struct Game::Impl
     assert(status == GL_TRUE);
   }
 
-  void initProgram()
-  {
+  void initProgram() {
     m_shaderProgram = glCreateProgram();
     glAttachShader(m_shaderProgram, m_vertexShader);
     glAttachShader(m_shaderProgram, m_fragmentShader);
@@ -237,8 +238,7 @@ struct Game::Impl
     glUseProgram(m_shaderProgram);
   }
 
-  void initAttribsAndUniforms()
-  {
+  void initAttribsAndUniforms() {
     // Specify the layout of the vertex data
     m_posAttrib = glGetAttribLocation(m_shaderProgram, "position");
     glEnableVertexAttribArray(m_posAttrib);
@@ -247,12 +247,12 @@ struct Game::Impl
     m_colAttrib = glGetAttribLocation(m_shaderProgram, "color");
     glEnableVertexAttribArray(m_colAttrib);
     glVertexAttribPointer(m_colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                          (void*)(3 * sizeof(float)));
+                          (void *)(3 * sizeof(float)));
 
     m_texAttrib = glGetAttribLocation(m_shaderProgram, "texcoord");
     glEnableVertexAttribArray(m_texAttrib);
     glVertexAttribPointer(m_texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                          (void*)(6 * sizeof(float)));
+                          (void *)(6 * sizeof(float)));
 
     m_uniTime = glGetUniformLocation(m_shaderProgram, "time");
     m_uniModel = glGetUniformLocation(m_shaderProgram, "model");
@@ -262,15 +262,14 @@ struct Game::Impl
     m_uniColorOverride = glGetUniformLocation(m_shaderProgram, "overrideColor");
   }
 
-  void initTextures()
-  {
+  void initTextures() {
     glGenTextures(2, m_textures);
     {
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, m_textures[0]);
       {
         sf::Image image;
-        bool      success = image.loadFromFile("assets/lenna.png");
+        bool success = image.loadFromFile("assets/lenna.png");
         assert(success);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getSize().x,
                      image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE,
@@ -287,7 +286,7 @@ struct Game::Impl
       glBindTexture(GL_TEXTURE_2D, m_textures[1]);
       {
         sf::Image image;
-        bool      success = image.loadFromFile("assets/ana.jpg");
+        bool success = image.loadFromFile("assets/ana.jpg");
         assert(success);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getSize().x,
                      image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE,
@@ -301,8 +300,7 @@ struct Game::Impl
     }
   }
 
-  void initTransforms()
-  {
+  void initTransforms() {
     // model
     m_model = glm::mat4(1.0f);
     glUniformMatrix4fv(m_uniModel, 1, GL_FALSE, glm::value_ptr(m_model));
@@ -322,15 +320,13 @@ struct Game::Impl
                        glm::value_ptr(projection));
   }
 
-  void checkGLError()
-  {
+  void checkGLError() {
     // TODO:
     // understand why this doesnt work, and enable it
     // assert(glGetError() == GL_FALSE);
   }
 
-  void create(Fatty::ThreeDState&)
-  {
+  void create(Fatty::ThreeDState &) {
     initGl();
 
     initVao();
@@ -356,8 +352,7 @@ struct Game::Impl
     m_startTimestamp = std::chrono::high_resolution_clock::now();
   }
 
-  void destroy(Fatty::ThreeDState&)
-  {
+  void destroy(Fatty::ThreeDState &) {
     glDeleteProgram(m_shaderProgram);
     glDeleteShader(m_fragmentShader);
     glDeleteShader(m_vertexShader);
@@ -367,14 +362,12 @@ struct Game::Impl
     glDeleteVertexArrays(1, &m_vao);
   }
 
-  void pause(Fatty::ThreeDState&) {}
+  void pause(Fatty::ThreeDState &) {}
 
-  void resume(Fatty::ThreeDState&) {}
+  void resume(Fatty::ThreeDState &) {}
 
-  void keyPressed(Fatty::ThreeDState&, const sf::Event::KeyEvent& key)
-  {
-    switch (key.code)
-    {
+  void keyPressed(Fatty::ThreeDState &, const sf::Event::KeyEvent &key) {
+    switch (key.code) {
       case sf::Keyboard::Left:
         m_leftPressed = true;
         break;
@@ -386,10 +379,8 @@ struct Game::Impl
     }
   }
 
-  void keyReleased(Fatty::ThreeDState&, const sf::Event::KeyEvent& key)
-  {
-    switch (key.code)
-    {
+  void keyReleased(Fatty::ThreeDState &, const sf::Event::KeyEvent &key) {
+    switch (key.code) {
       case sf::Keyboard::Left:
         m_leftPressed = false;
         break;
@@ -401,20 +392,16 @@ struct Game::Impl
     }
   }
 
-  void updateBackgroundColor()
-  {
-    if (m_leftPressed)
-    {
+  void updateBackgroundColor() {
+    if (m_leftPressed) {
       m_r = (m_r + 1) % 100;
     }
-    if (m_rightPressed)
-    {
+    if (m_rightPressed) {
       m_g = (m_g + 1) % 100;
     }
   }
 
-  void updateTransforms(float delta)
-  {
+  void updateTransforms(float delta) {
     // rotate model
     m_model = glm::rotate(glm::mat4(1.0f), delta, glm::vec3(0.0f, 0.0f, 1.0f));
 
@@ -435,10 +422,9 @@ struct Game::Impl
     // glUniformMatrix4fv(m_uniView, 1, GL_FALSE, glm::value_ptr(m_view));
   }
 
-  void tick(Fatty::ThreeDState&)
-  {
+  void tick(Fatty::ThreeDState &) {
     // TODO: move to fatty
-    auto  now = std::chrono::high_resolution_clock::now();
+    auto now = std::chrono::high_resolution_clock::now();
     float delta = std::chrono::duration_cast<std::chrono::duration<float>>(
                       now - m_startTimestamp)
                       .count();
@@ -450,15 +436,16 @@ struct Game::Impl
     updateTransforms(delta);
   }
 
-  void draw(Fatty::ThreeDState& state)
-  {
+  void draw(Fatty::ThreeDState &state) {
+    glUniform3f(m_uniColorOverride, 1.0, 1.0, 1.0);
+
     // Clear the screen
     // glClearColor(m_r / 100.0, m_g / 100.0, m_b / 100.0, 1.0f);
     glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Draw cube
-    glUniform3f(m_uniColorOverride, 1.0, 1.0, 1.0);
+    // glUniform3f(m_uniColorOverride, 1.0, 1.0, 1.0);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     // Draw floor
@@ -482,26 +469,24 @@ Game::Game() : m_impl(new Impl) {}
 
 Game::~Game() = default;
 
-void Game::create(Fatty::ThreeDState& s) { m_impl->create(s); }
+void Game::create(Fatty::ThreeDState &s) { m_impl->create(s); }
 
-void Game::destroy(Fatty::ThreeDState& s) { m_impl->destroy(s); }
+void Game::destroy(Fatty::ThreeDState &s) { m_impl->destroy(s); }
 
-void Game::pause(Fatty::ThreeDState& s) { m_impl->pause(s); }
+void Game::pause(Fatty::ThreeDState &s) { m_impl->pause(s); }
 
-void Game::resume(Fatty::ThreeDState& s) { m_impl->resume(s); }
+void Game::resume(Fatty::ThreeDState &s) { m_impl->resume(s); }
 
-void Game::keyPressed(Fatty::ThreeDState& s, const sf::Event::KeyEvent& e)
-{
+void Game::keyPressed(Fatty::ThreeDState &s, const sf::Event::KeyEvent &e) {
   m_impl->keyPressed(s, e);
 }
 
-void Game::keyReleased(Fatty::ThreeDState& s, const sf::Event::KeyEvent& e)
-{
+void Game::keyReleased(Fatty::ThreeDState &s, const sf::Event::KeyEvent &e) {
   m_impl->keyReleased(s, e);
 }
 
-void Game::tick(Fatty::ThreeDState& s) { m_impl->tick(s); }
+void Game::tick(Fatty::ThreeDState &s) { m_impl->tick(s); }
 
-void Game::draw(Fatty::ThreeDState& s) { m_impl->draw(s); }
+void Game::draw(Fatty::ThreeDState &s) { m_impl->draw(s); }
 
 }  // namespace Sample
